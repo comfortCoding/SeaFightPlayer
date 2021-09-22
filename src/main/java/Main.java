@@ -6,6 +6,6 @@ public class Main {
 
     public static void main(String[] args) {
         BrowserDriver game = new BrowserDriver(DOMAIN);
-        game.play();
+        game.run();
     }
 }

@@ -7,17 +7,20 @@ import java.time.Duration;
 import static config.Config.*;
 
 
-public class Algorithm {
+public class Game {
 
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    public Algorithm(WebDriver driver) {
+    public Game(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT));
     }
 
-    public void run() {
+    public void play() {
+
+        driver.findElement(By.className("battlefield-start-button")).click();
+
         Integer[] directions = {GO_LEFT, GO_RIGHT, GO_DOWN, GO_UP};
 
         for (int y = 0; y < FIELD_SIZE; y++) {
@@ -30,7 +33,7 @@ public class Algorithm {
                     if (status == CELL_EMPTY) {
                         hit(x, y);
                     } else if (status == CELL_HIT) {
-                        hit(x, y, direction);
+                        finishHit(x, y, direction);
                     }
                 }
             }
@@ -45,17 +48,15 @@ public class Algorithm {
 
         WebElement rivalField = driver.findElement(By.xpath("//div[contains(@class, 'battlefield__rival')]"));
 
-        waitForTheOpponent(rivalField);
-
         WebElement hitCell = rivalField.findElement(By.xpath(".//div[@data-y='" + y + "' and @data-x='" + x + "']"));
+
+        waitForTheOpponent(rivalField);
         hitCell.click();
     }
 
-    private void hit(int x, int y, int direction) {
+    private void finishHit(int x, int y, int direction) {
 
-        int cellStatus = CELL_HIT;
-
-        while (cellStatus == CELL_HIT) {
+        do {
             switch (direction) {
                 case GO_UP:
                     y--;
@@ -71,8 +72,7 @@ public class Algorithm {
                     break;
             }
             hit(x, y);
-            cellStatus = getStatus(x, y);
-        }
+        } while (getStatus(x, y) == CELL_HIT);
     }
 
     private int getStatus(int x, int y) {

@@ -2,31 +2,23 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 public class BrowserDriver {
-    private WebDriver driver;
 
-    private WebElement newGame;
+    private WebDriver driver;
 
     public BrowserDriver(String url) {
         setPropertiesChrome();
 
         driver.manage().window().maximize();
         driver.get(url);
-
-        joinGame();
     }
 
-    public void play() {
-        Algorithm game = new Algorithm(driver);
+    public void run() {
+        Game game = new Game(driver);
         try {
-            game.run();
+            game.play();
         } catch (WebDriverException exception) {
             driver.quit();
         }
-    }
-
-    private void joinGame() {
-        newGame = driver.findElement(By.className("battlefield-start-button"));
-        newGame.click();
     }
 
     private void setPropertiesChrome() {
