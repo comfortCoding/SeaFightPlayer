@@ -18,33 +18,20 @@ public class Algorithm {
     }
 
     public void run() {
+        Integer[] directions = {GO_LEFT, GO_RIGHT, GO_DOWN, GO_UP};
 
         for (int y = 0; y < FIELD_SIZE; y++) {
+
             for (int x = 0; x < FIELD_SIZE; x++) {
 
-                int status = getStatus(x, y);
-                if (status == CELL_EMPTY) {
-                    hit(x, y);
-                }
+                for (Integer direction : directions) {
 
-                status = getStatus(x, y);
-                if (status == CELL_HIT) {
-                    finishHit(x, y, GO_LEFT);
-                }
-
-                status = getStatus(x, y);
-                if (status == CELL_HIT) {
-                    finishHit(x, y, GO_RIGHT);
-                }
-
-                status = getStatus(x, y);
-                if (status == CELL_HIT) {
-                    finishHit(x, y, GO_DOWN);
-                }
-
-                status = getStatus(x, y);
-                if (status == CELL_HIT) {
-                    finishHit(x, y, GO_UP);
+                    int status = getStatus(x, y);
+                    if (status == CELL_EMPTY) {
+                        hit(x, y);
+                    } else if (status == CELL_HIT) {
+                        hit(x, y, direction);
+                    }
                 }
             }
         }
@@ -64,9 +51,9 @@ public class Algorithm {
         hitCell.click();
     }
 
-    private void finishHit(int x, int y, int direction) {
+    private void hit(int x, int y, int direction) {
 
-        int cellStatus = getStatus(x, y);
+        int cellStatus = CELL_HIT;
 
         while (cellStatus == CELL_HIT) {
             switch (direction) {
