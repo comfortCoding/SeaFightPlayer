@@ -1,6 +1,8 @@
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import rival.Board;
+import rival.Cell;
 
 import java.time.Duration;
 
@@ -11,47 +13,36 @@ public class Game {
 
     private final WebDriver driver;
     private final WebDriverWait wait;
+    private final Cell[][] board;
 
     public Game(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(TIME_OUT));
+        this.board = new Board().getBoard();
     }
 
     public void play() {
-
         driver.findElement(By.className("battlefield-start-button")).click();
+        algorithm();
+    }
 
-        Integer[] directions = {GO_LEFT, GO_RIGHT, GO_DOWN, GO_UP};
-
+    private void algorithm() {
         for (int y = 0; y < FIELD_SIZE; y++) {
 
             for (int x = 0; x < FIELD_SIZE; x++) {
 
-                for (Integer direction : directions) {
+                WebElement rivalField = driver.findElement(By.xpath(RIVAL_BOARD));
 
-                    int status = getStatus(x, y);
-                    if (status == CELL_EMPTY) {
-                        hit(x, y);
-                    } else if (status == CELL_HIT) {
-                        finishHit(x, y, direction);
-                    }
+                waitForTheOpponent(rivalField);
+
+                int status = board[x][y].getCellStatus();
+
+                if (status == CELL_EMPTY) {
+                    board[x][y].hit(driver,
+                            rivalField);
                 }
             }
         }
-    }
-
-    private void hit(int x, int y) {
-
-        if (!isCellValid(x, y)) {
-            return;
-        }
-
-        WebElement rivalField = driver.findElement(By.xpath("//div[contains(@class, 'battlefield__rival')]"));
-
-        WebElement hitCell = rivalField.findElement(By.xpath(".//div[@data-y='" + y + "' and @data-x='" + x + "']"));
-
-        waitForTheOpponent(rivalField);
-        hitCell.click();
     }
 
     private void finishHit(int x, int y, int direction) {
@@ -71,45 +62,11 @@ public class Game {
                     x--;
                     break;
             }
-            hit(x, y);
-        } while (getStatus(x, y) == CELL_HIT);
-    }
-
-    private int getStatus(int x, int y) {
-
-        if (!isCellValid(x, y)) {
-            return ERROR_CODE;
-        }
-
-        WebElement rivalField = driver.findElement(By.xpath("//div[contains(@class, 'battlefield__rival')]"));
-
-        waitForTheOpponent(rivalField);
-
-        WebElement hitCell = rivalField.findElement(By.xpath(".//div[@data-y='" + y + "' and @data-x='" + x + "']"));
-        WebElement parent = (WebElement) ((JavascriptExecutor) driver).executeScript("return arguments[0].parentNode;", hitCell);
-
-        if (elementHasClass(parent, "empty")) {
-            return CELL_EMPTY;
-        }
-
-        if (elementHasClass(parent, "hit")
-                && !elementHasClass(parent, "done")) {
-            return CELL_HIT;
-        }
-
-        if (elementHasClass(parent, "done")) {
-            return CELL_DONE;
-        }
-
-        if (elementHasClass(parent, "miss")) {
-            return CELL_MISS;
-        }
-
-        return ERROR_CODE;
-    }
-
-    private boolean elementHasClass(WebElement element, String className) {
-        return element.getAttribute("class").contains(className);
+            if (!isCellValid(x, y)) {
+                return;
+            }
+            board[x][y].hit(driver, driver.findElement(By.xpath(RIVAL_BOARD)));
+        } while (board[x][y].getCellStatus() == CELL_HIT);
     }
 
     private void waitForTheOpponent(WebElement rivalField) {
