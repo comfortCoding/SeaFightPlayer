@@ -10,20 +10,19 @@ public class Config {
     public static final String CELL_NAME_IS_MISS = "miss";
 
     public static final String RIVAL_BOARD = "//div[contains(@class, 'battlefield__rival')]";
+    public static final String WEB_START_BUTTON = "battlefield-start-button";
+    public static final String WEB_RIVAL_BOARD_NAME = "battlefield battlefield__rival";
+    public static final String WEB_CLASS_ATT = "class";
+    public static final String WEB_DRIVER_CHROME_SETTINGS = "webdriver.chrome.driver";
+    public static final String WEB_DRIVER_CHROME = "lib\\chromedriver.exe";
+
 
     public static final int FIELD_SIZE = 10;
     public static final int TIME_OUT = 30;
-
-    public static final int ERROR_CODE = -100;
 
     public static final int CELL_EMPTY = 0;
     public static final int CELL_MISS = -1;
     public static final int CELL_HIT = 1;
     public static final int CELL_DONE = 2;
-
-    public static final int GO_UP = 1;
-    public static final int GO_DOWN = 2;
-    public static final int GO_LEFT = 3;
-    public static final int GO_RIGHT = 4;
 
 }

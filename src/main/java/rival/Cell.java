@@ -62,7 +62,7 @@ public class Cell {
     }
 
     private boolean elementHasClass(WebElement element, String className) {
-        return element.getAttribute("class").contains(className);
+        return element.getAttribute(WEB_CLASS_ATT).contains(className);
     }
 
 }

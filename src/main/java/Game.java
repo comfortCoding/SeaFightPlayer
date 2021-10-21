@@ -22,7 +22,7 @@ public class Game {
     }
 
     public void play() {
-        driver.findElement(By.className("battlefield-start-button")).click();
+        driver.findElement(By.className(WEB_START_BUTTON)).click();
         algorithm();
     }
 
@@ -30,9 +30,10 @@ public class Game {
         for (int y = 0; y < FIELD_SIZE; y++) {
 
             for (int x = 0; x < FIELD_SIZE; x++) {
-
+                // we need to find the rival field first
                 WebElement rivalField = driver.findElement(By.xpath(RIVAL_BOARD));
-
+                //then we need to apply waiting to the algorithm till the rival field becomes available
+                //(classname changes to WEB_RIVAL_BOARD_NAME)
                 waitForTheOpponent(rivalField);
 
                 int status = board[x][y].getCellStatus();
@@ -45,35 +46,8 @@ public class Game {
         }
     }
 
-    private void finishHit(int x, int y, int direction) {
-
-        do {
-            switch (direction) {
-                case GO_UP:
-                    y--;
-                    break;
-                case GO_DOWN:
-                    y++;
-                    break;
-                case GO_RIGHT:
-                    x++;
-                    break;
-                case GO_LEFT:
-                    x--;
-                    break;
-            }
-            if (!isCellValid(x, y)) {
-                return;
-            }
-            board[x][y].hit(driver, driver.findElement(By.xpath(RIVAL_BOARD)));
-        } while (board[x][y].getCellStatus() == CELL_HIT);
-    }
-
     private void waitForTheOpponent(WebElement rivalField) {
-        wait.until(ExpectedConditions.attributeToBe(rivalField, "class", "battlefield battlefield__rival"));
+        wait.until(ExpectedConditions.attributeToBe(rivalField, WEB_CLASS_ATT, WEB_RIVAL_BOARD_NAME));
     }
 
-    private boolean isCellValid(int x, int y) {
-        return y >= 0 && x >= 0 && x < FIELD_SIZE && y < FIELD_SIZE;
-    }
 }

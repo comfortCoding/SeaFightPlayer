@@ -1,6 +1,9 @@
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import static config.Config.WEB_DRIVER_CHROME;
+import static config.Config.WEB_DRIVER_CHROME_SETTINGS;
+
 public class BrowserDriver {
 
     private WebDriver driver;
@@ -22,7 +25,7 @@ public class BrowserDriver {
     }
 
     private void setPropertiesChrome() {
-        System.setProperty("webdriver.chrome.driver", "lib\\chromedriver.exe");
+        System.setProperty(WEB_DRIVER_CHROME_SETTINGS, WEB_DRIVER_CHROME);
         driver = new ChromeDriver();
     }
 }
